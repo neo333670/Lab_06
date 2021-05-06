@@ -100,12 +100,14 @@ public class FlyingHook : MonoBehaviour
                 joint.angularZMotion = ConfigurableJointMotion.Free;
 
                 var m_limit = joint.linearLimit;
+                Debug.Log("Limit: " + m_limit.limit);
                 m_limit.limit = 4;
 
                 joint.linearLimit = m_limit;
+                Debug.Log("Limit: " + m_limit.limit);
 
                 joint.autoConfigureConnectedAnchor = false;
-                joint.connectedAnchor = new Vector3(0f, 1f, 0f);
+                joint.connectedAnchor = new Vector3(0f, 0.5f, 0f);
                 joint.anchor = new Vector3(0f, 0f, 0f);
 
                 joint.connectedBody = m_DetectedObject.GetComponent<Rigidbody>();
@@ -124,12 +126,14 @@ public class FlyingHook : MonoBehaviour
     }
 
     void UpdateCable() {
-        m_cable.enabled = m_JointForObject != null? true: false;
+        m_cable.enabled = m_JointForObject != null && m_JointForObject.connectedBody != null;
 
         if (m_cable.enabled) {
             if(m_JointForObject != null){
                 m_cable.SetPosition(0, this.transform.position);
-                m_cable.SetPosition(1, m_JointForObject.connectedBody.transform.position);
+
+                var connectedBodyTransform = m_JointForObject.connectedBody.transform;
+                m_cable.SetPosition(1, connectedBodyTransform.TransformPoint( m_JointForObject.connectedAnchor));
             }
         }
     }
