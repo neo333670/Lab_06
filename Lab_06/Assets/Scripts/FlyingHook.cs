@@ -8,7 +8,7 @@ public class FlyingHook : MonoBehaviour
     const float ATTACH_DISTANCE = 3f;
 
     GameObject m_DetectedObject;
-    Joint m_JointForObject;
+    [SerializeField] Joint m_JointForObject;
     [SerializeField] LineRenderer m_cable;
 
     private void Start()
@@ -17,19 +17,22 @@ public class FlyingHook : MonoBehaviour
         m_JointForObject = null;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Move()
     {
-        if (Input.GetKey(KeyCode.LeftArrow)) {
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
             this.transform.Translate(MOVE_SPEED * Time.deltaTime, 0, 0);
         }
-        if (Input.GetKey(KeyCode.RightArrow)) {
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
             this.transform.Translate(-MOVE_SPEED * Time.deltaTime, 0, 0);
         }
-        if (Input.GetKey(KeyCode.UpArrow)) {
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
             this.transform.Translate(0, 0, MOVE_SPEED * Time.deltaTime);
         }
-        if (Input.GetKey(KeyCode.DownArrow)) {
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
             this.transform.Translate(0, 0, -MOVE_SPEED * Time.deltaTime);
         }
         if (Input.GetKey(KeyCode.Q))
@@ -40,6 +43,13 @@ public class FlyingHook : MonoBehaviour
         {
             this.transform.Translate(0, -MOVE_SPEED * Time.deltaTime, 0);
         }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //Move();
+
         if (m_JointForObject == null) { 
             DetectObject();
         }
@@ -87,7 +97,6 @@ public class FlyingHook : MonoBehaviour
     void AttachOrDetachObject() {
         if (m_JointForObject == null)
         {
-            Debug.Log(m_JointForObject);
             if (m_DetectedObject != null)
             {
                 var joint = this.gameObject.AddComponent<ConfigurableJoint>();
@@ -100,11 +109,9 @@ public class FlyingHook : MonoBehaviour
                 joint.angularZMotion = ConfigurableJointMotion.Free;
 
                 var m_limit = joint.linearLimit;
-                Debug.Log("Limit: " + m_limit.limit);
                 m_limit.limit = 4;
 
                 joint.linearLimit = m_limit;
-                Debug.Log("Limit: " + m_limit.limit);
 
                 joint.autoConfigureConnectedAnchor = false;
                 joint.connectedAnchor = new Vector3(0f, 0.5f, 0f);
@@ -119,7 +126,6 @@ public class FlyingHook : MonoBehaviour
             }
         }
         else {
-            Debug.Log(m_JointForObject);
             GameObject.Destroy(m_JointForObject);
             m_JointForObject = null;
         }
