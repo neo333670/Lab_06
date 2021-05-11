@@ -13,11 +13,13 @@ public class TowerComtroller : MonoBehaviour
     float dis;
 
     LineRenderer m_HookCableLine;
+    public Vector3 fixHookZ;
+
+    FlyingHook m_flyingHook;
 
     float trolley_y;
     float hook_z;
     
-
     const float spinSpeed = 20f;
     const float trolleySpeed = 3f;
     const float hooksSpeed = 5f;
@@ -26,14 +28,19 @@ public class TowerComtroller : MonoBehaviour
     {
         m_Jib = this.transform.GetChild(1).gameObject;
         m_Trolley = this.transform.GetChild(1).GetChild(0).gameObject;
-        m_Hook = this.transform.GetChild(1).GetChild(0).GetChild(0).gameObject;
+        //m_Hook = this.transform.GetChild(1).GetChild(0).GetChild(0).gameObject;
+        m_Hook = this.transform.GetChild(1).GetChild(1).gameObject;
 
         m_HookcableJoint = m_Trolley.GetComponent<ConfigurableJoint>();
 
         dis_vector = m_HookcableJoint.anchor - m_HookcableJoint.connectedAnchor;
-        float dis = dis_vector.magnitude;
-        
+        dis = 0;
+
         m_HookCableLine = m_Trolley.GetComponent<LineRenderer>();
+        m_HookCableLine.startWidth = 0.05f;
+        m_HookCableLine.endWidth = 0.05f;
+
+        m_flyingHook = m_Hook.GetComponent<FlyingHook>();
     }
 
     // Update is called once per frame
@@ -76,22 +83,26 @@ public class TowerComtroller : MonoBehaviour
         dis += hook_z;
         
         var m_limit = m_HookcableJoint.linearLimit;
-        m_limit.limit = dis + 1f;
+        m_limit.limit = dis;
         m_HookcableJoint.linearLimit = m_limit;
     }
 
     void HookControll()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetKey(KeyCode.DownArrow))
         {
+            if (m_flyingHook.IsHookHited) {
+                return;
+            }
+
             hook_z = hooksSpeed * Time.deltaTime;
-            UpdateJointLimit();
+            UpdateJointLimit();           
             //m_Hook.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(m_Hook.transform.localPosition.z + hook_z, -15.75f, -0.25f));
         }
-        else if (Input.GetMouseButton(1))
+        else if (Input.GetKey(KeyCode.UpArrow))
         {
             hook_z = -hooksSpeed * Time.deltaTime;
-            UpdateJointLimit();
+            UpdateJointLimit();            
             //m_Hook.transform.localPosition = new Vector3(0, 0, Mathf.Clamp(m_Hook.transform.localPosition.z + hook_z, -15.75f, -0.25f));
         }
         
@@ -99,7 +110,7 @@ public class TowerComtroller : MonoBehaviour
     void CreateCable()
     {
         m_HookCableLine.SetPosition(0, m_Trolley.transform.position);
-        m_HookCableLine.SetPosition(1, m_Hook.transform.position);
+        m_HookCableLine.SetPosition(1, m_Hook.transform.position + fixHookZ);
     }
 }
 
