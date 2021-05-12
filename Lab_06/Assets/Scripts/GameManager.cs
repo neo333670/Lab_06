@@ -6,20 +6,19 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject m_cube;
     [SerializeField] GameObject m_shpere;
-    GameObject m_CubeDestnation;
+
     Collider m_collider;
 
     public float x_range;
     public float z_range;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         x_range = 5;
-        z_range = 10;
+        z_range = 8;
 
-        m_CubeDestnation = GameObject.Find("Cube_Destination");
-
+        GeneratePrimitves(m_cube, 3);
+        GeneratePrimitves(m_shpere, 2);
     }
 
     // Update is called once per frame
@@ -39,7 +38,7 @@ public class GameManager : MonoBehaviour
             var item = Instantiate(gameObject);
             item.transform.position = new Vector3(Random.Range(-x_range, x_range)
                 , 3f
-                , Random.Range(-z_range, z_range)
+                , Random.Range( 2, z_range)
                 );
         }
     }

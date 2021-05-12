@@ -4,34 +4,31 @@ using UnityEngine;
 
 public class CubeTrigger : MonoBehaviour
 {
-    Rigidbody m_Rigidbody;
+    int m_FinishedNum;
+    public int FinishedNum { get { return m_FinishedNum; } }
+    
+    Collider m_Collider;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_Rigidbody = GetComponent<Rigidbody>();
+        m_FinishedNum = 0;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     private void OnTriggerEnter(Collider other)
     {
         var box = other as BoxCollider;
 
         if (box != null) {
-            box.GetComponent<MeshRenderer>().material.color = Color.green;
-        }
-    }
-    private void OnTriggerStay(Collider other)
-    {
-        var box = other as BoxCollider;
-        
-        if (box != null && box.GetComponent<MeshRenderer>().material.color != Color.green)
-        {
-            box.GetComponent<MeshRenderer>().material.color = Color.green;
+            var boxinfo = box.GetComponent<ItemCollision>();
+            if (box.GetComponent<Rigidbody>().velocity.magnitude > boxinfo.damageThreshold)
+            {
+                boxinfo.DelayChangeGreen();
+            }
+            else {
+                boxinfo.ChangeColorGreen();
+            }
+            m_FinishedNum++;
         }
     }
 
@@ -41,6 +38,7 @@ public class CubeTrigger : MonoBehaviour
 
         if (box != null)
         {
+            m_FinishedNum --;
             box.GetComponent<MeshRenderer>().material.color = Color.white;
         }
     }

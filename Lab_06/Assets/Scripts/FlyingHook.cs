@@ -132,12 +132,15 @@ public class FlyingHook : MonoBehaviour
 
                 m_JointForObject = joint;
 
-                m_DetectedObject.GetComponent<MeshRenderer>().material.color = Color.red;
+                m_DetectedObject.GetComponent<MeshRenderer>().material.color = Color.cyan;
                 m_DetectedObject = null;
             }
         }
         else {
-            m_JointForObject.connectedBody.GetComponent<MeshRenderer>().material.color = Color.white;
+            if (m_JointForObject.connectedBody.GetComponent<MeshRenderer>().material.color == Color.cyan) {
+                m_JointForObject.connectedBody.GetComponent<MeshRenderer>().material.color = Color.white;
+            }
+            
             GameObject.Destroy(m_JointForObject);
             m_JointForObject = null;
         }

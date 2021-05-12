@@ -4,35 +4,42 @@ using UnityEngine;
 
 public class SphereTrigger : MonoBehaviour
 {
+    int m_FinishedNum;
+    public int FinishedNum { get { return m_FinishedNum; } }
+
+    void Start()
+    {
+        m_FinishedNum = 0;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        var box = other as SphereCollider;
+        var sphere = other as SphereCollider;
 
-        if (box != null)
+        if (sphere != null)
         {
-            box.GetComponent<MeshRenderer>().material.color = Color.blue;
-        }
-    }
-    private void OnTriggerStay(Collider other)
-    {
-        var box = other as SphereCollider;
-
-        if (box != null && box.GetComponent<MeshRenderer>().material.color != Color.blue)
-        {
-            box.GetComponent<MeshRenderer>().material.color = Color.blue;
+            var sphereInfo = sphere.GetComponent<ItemCollision>();
+            if (sphere.GetComponent<Rigidbody>().velocity.magnitude > sphereInfo.damageThreshold)
+            {
+                sphereInfo.DelayChangeBlue();
+            }
+            else
+            {
+                sphereInfo.ChangeColorBlue();
+            }
+            m_FinishedNum++;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        var box = other as SphereCollider;
+        var sphere = other as SphereCollider;
 
-        if (box != null)
+        if (sphere != null)
         {
-            box.GetComponent<MeshRenderer>().material.color = Color.white;
+            m_FinishedNum--;
+            sphere.GetComponent<MeshRenderer>().material.color = Color.white;
         }
     }
-
 
 }
